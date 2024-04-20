@@ -1,20 +1,26 @@
 package produktiivsustracker.ui;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.util.converter.IntegerStringConverter;
 
-public class Main extends Application {
+import java.util.function.UnaryOperator;
+
+public class dbUhendamineUI extends Application {
+    public static String dbKasutajanimi;
+    public static String dbParool;
+    public static int dbPort;
+    public static String dbNimi;
 
     public static void main(String[] args) {
         launch(args);
@@ -44,8 +50,18 @@ public class Main extends Application {
         Label parooliSilt = new Label("Andmebaasi parool:");
         PasswordField parooliVali = new PasswordField();
 
+
+        UnaryOperator<TextFormatter.Change> numbriFilter = muutus -> {
+            String uusTekst = muutus.getControlNewText();
+            if (uusTekst.matches("\\d*")) {
+                return muutus;
+            }
+            return null;
+        };
+
         Label pordiSilt = new Label("Andmebaasi LocalHost port:");
         TextField pordiVali = new TextField();
+        pordiVali.setTextFormatter(new TextFormatter<>(new IntegerStringConverter(), null, numbriFilter));  // https://stackoverflow.com/questions/40472668/numeric-textfield-for-integers-in-javafx-8-with-textformatter-and-or-unaryoperat
 
         Label andmebaasiNimeSilt = new Label("Andmebaasi nimi:");
         TextField andmebaasiNimeVali = new TextField();
@@ -56,7 +72,12 @@ public class Main extends Application {
         final int[] fokuseeritudVali = {0};
 
         EventHandler<KeyEvent> nupuVajutus = keyEvent -> {
-            if (keyEvent.getCode() == KeyCode.ENTER || keyEvent.getCode() == KeyCode.DOWN) {
+            if (keyEvent.getCode() == KeyCode.ENTER) {
+                if (fokuseeritudVali[0] == 3) liiguEdasi(peaLava, tekstiValjad);
+                fokuseeritudVali[0]++;
+                fokuseeritudVali[0] = Math.min(fokuseeritudVali[0], 3);
+                keyEvent.consume();
+            } else if (keyEvent.getCode() == KeyCode.DOWN) {
                 fokuseeritudVali[0]++;
                 fokuseeritudVali[0] = Math.min(fokuseeritudVali[0], 3);
                 keyEvent.consume();
@@ -73,10 +94,23 @@ public class Main extends Application {
             GridPane.setHgrow(tekstiValjad[elemendiNr], Priority.ALWAYS);
 
             tekstiValjad[elemendiNr].setOnKeyPressed(nupuVajutus);
+
+            final int finalElemendiNr = elemendiNr;
+            tekstiValjad[elemendiNr].focusedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observableValue, Boolean vanaVaartus, Boolean uusVaartus) {
+                    if (uusVaartus) {
+                        fokuseeritudVali[0] = finalElemendiNr;
+                    }
+                }
+            });
         }
 
         // Nupp
         Button edasiNupp = new Button("Edasi");
+        edasiNupp.setOnMouseClicked(mouseEvent -> {
+            liiguEdasi(peaLava, tekstiValjad);
+        });
 
         juur.getChildren().addAll(ankeet, edasiNupp);
 
@@ -86,5 +120,13 @@ public class Main extends Application {
         peaLava.setScene(stseen);
         peaLava.setTitle("Andmebaasi sisselogimine");
         peaLava.show();
+    }
+
+    private void liiguEdasi(Stage peaLava, TextField[] tekstiValjad) {
+        dbKasutajanimi = tekstiValjad[0].getText();
+        dbParool = tekstiValjad[1].getText();
+        dbPort = Integer.parseInt(tekstiValjad[2].getText());
+        dbNimi = tekstiValjad[3].getText();
+        peaLava.close();
     }
 }
