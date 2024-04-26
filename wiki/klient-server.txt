@@ -1,0 +1,5 @@
+Lingid Javas kliendi ja serveri suhtluse teostamiset:
+
+https://www.baeldung.com/a-guide-to-java-sockets - Väga hea material Java programmi koostamiseks
+https://www.javatpoint.com/socket-programming - Materiali algul hästi ära seletatud, kuidas klient ja server suhtlevad
+

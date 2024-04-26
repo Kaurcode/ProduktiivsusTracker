@@ -9,7 +9,6 @@ public class Server implements AutoCloseable {
     private ServerSocket server;
     private ArrayList<UhendatudKlient> kliendid;
 
-
     public void start(int port) throws IOException {
         kliendid = new ArrayList<UhendatudKlient>();
 

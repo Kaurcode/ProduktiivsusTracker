@@ -11,14 +11,12 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.converter.IntegerStringConverter;
+import produktiivsustracker.server.db.Andmebaas;
 
+import java.sql.SQLException;
 import java.util.function.UnaryOperator;
 
 public class dbUhendamineUI extends Application {
-    public static String dbKasutajanimi;
-    public static String dbParool;
-    public static int dbPort;
-    public static String dbNimi;
 
     public static void main(String[] args) {
         launch(args);
@@ -116,10 +114,18 @@ public class dbUhendamineUI extends Application {
     }
 
     private void liiguEdasi(Stage peaLava, TextField[] tekstiValjad) {
-        dbKasutajanimi = tekstiValjad[0].getText();
-        dbParool = tekstiValjad[1].getText();
-        dbPort = Integer.parseInt(tekstiValjad[2].getText());
-        dbNimi = tekstiValjad[3].getText();
+        String dbKasutajanimi = tekstiValjad[0].getText();
+        String dbParool = tekstiValjad[1].getText();
+        int dbPort = Integer.parseInt(tekstiValjad[2].getText());
+        String dbNimi = tekstiValjad[3].getText();
+
+        Andmebaas andmebaas;
+
+        try {
+            andmebaas = new Andmebaas(dbKasutajanimi, dbParool, dbPort, dbNimi);
+        } catch (SQLException viga) {
+
+        }
         peaLava.close();
     }
 }

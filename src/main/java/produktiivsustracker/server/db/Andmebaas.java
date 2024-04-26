@@ -6,7 +6,7 @@ public class Andmebaas implements AutoCloseable {
     private Connection andmebaas;
     private String andmebaasiNimi;
 
-    public Andmebaas(String kasutajaNimi, String parool, int port, String andmebaasiNimi) {
+    public Andmebaas(String kasutajaNimi, String parool, int port, String andmebaasiNimi) throws SQLException {
         this.andmebaasiNimi = andmebaasiNimi;
         andmebaas = looUhendus(kasutajaNimi, parool, port, "postgres");
         looAndmebaas();
@@ -35,16 +35,11 @@ public class Andmebaas implements AutoCloseable {
      * @param andmebaasiNimi Parameeter andmebaasi nime jaoks, valisime "pomodoro"
      * @return Tagastab ühenduse andmebaasiga
      */
-    public Connection looUhendus(String kasutajaNimi, String parool, int port, String andmebaasiNimi) {
-        try {
-            String url = String.format("jdbc:postgresql://localhost:%d/%s", port, andmebaasiNimi);
-            Connection andmebaas = DriverManager.getConnection(url, kasutajaNimi, parool);
-            System.out.println("Ühendus loodud");
-            return andmebaas;
-        } catch (SQLException viga) {
-            System.out.println("Andmebaasiga ühendamisel tekkis viga: " + viga.getMessage());
-        }
-        return null;
+    public Connection looUhendus(String kasutajaNimi, String parool, int port, String andmebaasiNimi) throws SQLException {
+        String url = String.format("jdbc:postgresql://localhost:%d/%s", port, andmebaasiNimi);
+        Connection andmebaas = DriverManager.getConnection(url, kasutajaNimi, parool);
+        System.out.println("Ühendus loodud");
+        return andmebaas;
     }
 
     public void katkestaUhendus() {
