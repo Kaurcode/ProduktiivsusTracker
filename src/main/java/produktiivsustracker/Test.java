@@ -17,9 +17,31 @@ public class Test {
         });
         serverThread.start();
 
-        try (Klient klient = new Klient();) {
-            klient.uhendaServeriga("127.0.0.1", 42069);
-            String vastus = klient.saadaSonum("Tere server!");
+        try (Klient klient1 = new Klient(); Klient klient2 = new Klient()) {
+            String vastus;
+
+            klient1.uhendaServeriga("127.0.0.1", 42069);
+            vastus = klient1.saadaSonum("Tere server!");
+            System.out.println("Klient1: " + vastus);
+
+            klient2.uhendaServeriga("127.0.0.1", 42069);
+            vastus = klient2.saadaSonum("Tere server!");
+            System.out.println("Klient2: " + vastus);
+
+            vastus = klient1.saadaSonum("Katse1");
+            System.out.println("Klient1: " + vastus);
+
+            vastus = klient2.saadaSonum("Katse1");
+            System.out.println("Klient2: " + vastus);
+
+            vastus = klient2.saadaSonum("EXIT");
+            System.out.println("Klient2: " + vastus);
+
+            vastus = klient1.saadaSonum("Minu nimi on Kaur");
+            System.out.println(vastus);
+            vastus = klient1.saadaSonum("Head aega!");
+            System.out.println(vastus);
+            vastus = klient1.saadaSonum("EXIT");
             System.out.println(vastus);
         }
     }

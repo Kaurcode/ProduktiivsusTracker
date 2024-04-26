@@ -3,37 +3,35 @@ package produktiivsustracker.server;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class Server implements AutoCloseable {
     private ServerSocket server;
-    private Socket klient;
-    private BufferedReader sisend;
-    private PrintWriter valjund;
+    private ArrayList<UhendatudKlient> kliendid;
 
 
     public void start(int port) throws IOException {
+        kliendid = new ArrayList<UhendatudKlient>();
+
         server = new ServerSocket(port);
-        klient = server.accept();
+        UhendatudKlient klient;
 
-        valjund = new PrintWriter(klient.getOutputStream(), true);
-        sisend = new BufferedReader(new InputStreamReader(klient.getInputStream()));
-
-        String tervitus = sisend.readLine();
-
-        if (tervitus.contentEquals("Tere server!")) {
-            valjund.println("Tere klient!");
-            System.out.println(tervitus);
-        } else {
-            valjund.println("Viga!");
-            System.out.println(tervitus);
+        while (true) {
+            klient = new UhendatudKlient(server.accept());
+            kliendid.add(klient);
+            klient.start();
         }
     }
 
     @Override
     public void close() throws IOException {
-        sisend.close();
-        valjund.close();
-        klient.close();
+        for (UhendatudKlient klient : kliendid) {
+            try {
+                klient.close();
+            } catch (IOException viga) {
+                System.out.println("Kliendi sulgemisel tekkis viga: " + viga.getMessage());
+            }
+        }
         server.close();
     }
 }
