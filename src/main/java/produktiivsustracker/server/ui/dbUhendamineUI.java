@@ -1,8 +1,6 @@
-package produktiivsustracker.ui;
+package produktiivsustracker.server.ui;
 
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -96,26 +94,21 @@ public class dbUhendamineUI extends Application {
             tekstiValjad[elemendiNr].setOnKeyPressed(nupuVajutus);
 
             final int finalElemendiNr = elemendiNr;
-            tekstiValjad[elemendiNr].focusedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> observableValue, Boolean vanaVaartus, Boolean uusVaartus) {
-                    if (uusVaartus) {
-                        fokuseeritudVali[0] = finalElemendiNr;
-                    }
+            tekstiValjad[elemendiNr].focusedProperty().addListener((observableValue, vanaVaartus, uusVaartus) -> {
+                if (uusVaartus) {
+                    fokuseeritudVali[0] = finalElemendiNr;
                 }
             });
         }
 
         // Nupp
         Button edasiNupp = new Button("Edasi");
-        edasiNupp.setOnMouseClicked(mouseEvent -> {
-            liiguEdasi(peaLava, tekstiValjad);
-        });
+        edasiNupp.setOnMouseClicked(mouseEvent -> liiguEdasi(peaLava, tekstiValjad));
 
         juur.getChildren().addAll(ankeet, edasiNupp);
 
         Scene stseen = new Scene(juur);
-        stseen.getStylesheets().add("produktiivsustracker/ui/Teema.css");
+        stseen.getStylesheets().add("produktiivsustracker/server/ui/Teema.css");
 
         peaLava.setScene(stseen);
         peaLava.setTitle("Andmebaasi sisselogimine");

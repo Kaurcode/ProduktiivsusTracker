@@ -1,7 +1,9 @@
-package produktiivsustracker.Main;
+package produktiivsustracker.server.Main;
 import javafx.application.Application;
-import produktiivsustracker.db.*;
-import produktiivsustracker.ui.*;
+import produktiivsustracker.server.db.*;
+import produktiivsustracker.server.db.Andmebaas;
+import produktiivsustracker.server.ui.dbUhendamineUI;
+import produktiivsustracker.server.ui.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -11,7 +13,7 @@ public class Main {
                 dbUhendamineUI.dbParool,
                 dbUhendamineUI.dbPort,
                 dbUhendamineUI.dbNimi)) {
-
+            //TODO
         }
     }
 }

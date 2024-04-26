@@ -25,8 +25,8 @@ tasks.withType(JavaCompile) {
 }
 
 application {
-    mainModule = 'produktiivsustracker.ui'
-    mainClass = 'produktiivsustracker.ui.Main'
+    mainModule = 'produktiivsustracker'
+    mainClass = 'produktiivsustracker.server.Main.Main'
 }
 
 javafx {

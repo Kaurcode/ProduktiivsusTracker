@@ -4,6 +4,6 @@ module produktiivsustracker.ui {
     requires java.sql;
     requires org.postgresql.jdbc;
 
-    opens produktiivsustracker.ui to javafx.fxml;
-    exports produktiivsustracker.ui;
+    opens produktiivsustracker.server.ui to javafx.fxml;
+    exports produktiivsustracker.server.ui;
 }
