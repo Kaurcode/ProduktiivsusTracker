@@ -6,12 +6,17 @@ public class Andmebaas implements AutoCloseable {
     private Connection andmebaas;
     private String andmebaasiNimi;
 
-    public Andmebaas(String kasutajaNimi, String parool, int port, String andmebaasiNimi) throws SQLException {
+    public Andmebaas(String URL, int port, String kasutajaNimi, String parool, String andmebaasiNimi,
+                     boolean teeKontroll) throws SQLException {
         this.andmebaasiNimi = andmebaasiNimi;
-        andmebaas = looUhendus(kasutajaNimi, parool, port, "postgres");
-        looAndmebaas();
-        katkestaUhendus();
-        andmebaas = looUhendus(kasutajaNimi, parool, port, andmebaasiNimi);
+
+        if (teeKontroll) {
+            andmebaas = looUhendus(URL, port, kasutajaNimi, parool, "postgres");
+            looAndmebaas();
+            katkestaUhendus();
+        }
+
+        andmebaas = looUhendus(URL, port, kasutajaNimi, parool, andmebaasiNimi);
         looKasutajadOlem();
         looUlesandedOlem();
         looPomodorodOlem();
@@ -35,8 +40,8 @@ public class Andmebaas implements AutoCloseable {
      * @param andmebaasiNimi Parameeter andmebaasi nime jaoks, valisime "pomodoro"
      * @return Tagastab ühenduse andmebaasiga
      */
-    public Connection looUhendus(String kasutajaNimi, String parool, int port, String andmebaasiNimi) throws SQLException {
-        String url = String.format("jdbc:postgresql://localhost:%d/%s", port, andmebaasiNimi);
+    public Connection looUhendus(String URL, int port, String kasutajaNimi, String parool, String andmebaasiNimi) throws SQLException {
+        String url = String.format("jdbc:postgresql://%s:%d/%s", URL, port, andmebaasiNimi);
         Connection andmebaas = DriverManager.getConnection(url, kasutajaNimi, parool);
         System.out.println("Ühendus loodud");
         return andmebaas;

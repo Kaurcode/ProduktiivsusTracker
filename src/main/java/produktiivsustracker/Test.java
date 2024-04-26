@@ -1,5 +1,6 @@
 package produktiivsustracker;
 
+import javafx.application.Application;
 import produktiivsustracker.klient.Klient;
 import produktiivsustracker.server.Server;
 
@@ -16,8 +17,10 @@ public class Test {
             }
         });
         serverThread.start();
+        Application.launch(produktiivsustracker.klient.ui.MainUI.class);
 
         try (Klient klient1 = new Klient(); Klient klient2 = new Klient()) {
+
             String vastus;
 
             klient1.uhendaServeriga("127.0.0.1", 42069);
