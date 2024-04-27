@@ -5,6 +5,8 @@ module produktiivsustracker.server {
     requires java.sql;
     requires org.postgresql.jdbc;
 
+    requires org.bouncycastle.provider;
+
     opens produktiivsustracker.server.ui to javafx.fxml;
     exports produktiivsustracker.server.ui;
 

@@ -8,6 +8,7 @@ public class Andmebaas implements AutoCloseable {
 
     public Andmebaas(String URL, int port, String kasutajaNimi, String parool, String andmebaasiNimi,
                      boolean teeKontroll) throws SQLException {
+
         this.andmebaasiNimi = andmebaasiNimi;
 
         if (teeKontroll) {
@@ -114,6 +115,7 @@ public class Andmebaas implements AutoCloseable {
                 "CREATE TABLE " + tabeliNimi + " (" +
                         "kasutaja_id SERIAL PRIMARY KEY NOT NULL UNIQUE," +
                         "nimi VARCHAR(100) NOT NULL UNIQUE" +
+                        "parool " +
                         ");";
 
         try (Statement looKasutajadOlemLause = andmebaas.createStatement()){
