@@ -115,7 +115,7 @@ public class MainUI extends Application {
         juur.getChildren().add(edasiNupp);
 
         Scene stseen = new Scene(juur);
-        stseen.getStylesheets().add("produktiivsustracker/Teema.css");
+        stseen.getStylesheets().add("produktiivsustracker/klient/Teema.css");
 
         return stseen;
     }

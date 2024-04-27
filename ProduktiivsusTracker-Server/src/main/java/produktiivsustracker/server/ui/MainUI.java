@@ -127,7 +127,7 @@ public class MainUI extends Application {
         juur.getChildren().addAll(ankeet, edasiNupp);
 
         Scene stseen = new Scene(juur);
-        stseen.getStylesheets().add("produktiivsustracker/Teema.css");
+        stseen.getStylesheets().add("produktiivsustracker/server/Teema.css");
 
         return stseen;
     }
@@ -195,7 +195,7 @@ public class MainUI extends Application {
         juur.getChildren().add(nupp);
 
         Scene stseen = new Scene(juur);
-        stseen.getStylesheets().add("produktiivsustracker/Teema.css");
+        stseen.getStylesheets().add("produktiivsustracker/server/Teema.css");
         return stseen;
     }
 }

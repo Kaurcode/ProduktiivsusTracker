@@ -1,8 +1,4 @@
-package produktiivsustracker;
-
 import javafx.application.Application;
-import produktiivsustracker.klient.Klient;
-import produktiivsustracker.server.Server;
 
 import java.io.IOException;
 
@@ -17,7 +13,7 @@ public class Test {
             }
         });
         serverThread.start();
-        Application.launch(produktiivsustracker.klient.ui.MainUI.class);
+        Application.launch(produktiivsustracker.server.ui.MainUI.class);
 
         try (Klient klient1 = new Klient(); Klient klient2 = new Klient()) {
 
