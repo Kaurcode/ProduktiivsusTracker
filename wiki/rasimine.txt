@@ -1,0 +1,2 @@
+Baitinfo kodeerimine ja dekodeerimine kasutades Base64 algoritmi: https://www.baeldung.com/java-base64-encode-and-decode
+Argon2 räsimine, kasutades Bouncy Castle teeki: https://www.baeldung.com/java-base64-encode-and-decode

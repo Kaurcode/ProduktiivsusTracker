@@ -6,15 +6,20 @@ import org.bouncycastle.crypto.params.Argon2Parameters;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.Base64;
 
 public class dbTest {
     public static void main(String[] args) {
         byte[] sool = looSool(16);
-        String parool1 = Arrays.toString(looParooliRasi("parool", sool));
-        String parool2 = Arrays.toString(looParooliRasi("parool", sool));
-
+        String parool1 = Base64.getEncoder().encodeToString(looParooliRasi("TereMinuNimiOnKaur", sool));
         System.out.println(parool1);
-        System.out.println(parool2);
+        System.out.println(parool1.length());
+
+        for (int i = 0; i < 10; i++) {
+            sool = looSool(16);
+            System.out.println(Base64.getEncoder().encodeToString(sool).length());
+        }
+
     }
 
     private static byte[] looParooliRasi(String parool, byte[] sool) {

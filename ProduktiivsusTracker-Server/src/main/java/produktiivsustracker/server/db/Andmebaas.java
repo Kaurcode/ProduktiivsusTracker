@@ -19,8 +19,9 @@ public class Andmebaas implements AutoCloseable {
 
         andmebaas = looUhendus(URL, port, kasutajaNimi, parool, andmebaasiNimi);
         looKasutajadOlem();
+        looEesmargidOlem();
         looUlesandedOlem();
-        looPomodorodOlem();
+        looProduktiivsusAegOlem();
     }
 
     public static boolean kontrolliDraiver() {
@@ -33,14 +34,6 @@ public class Andmebaas implements AutoCloseable {
         return true;
     }
 
-    /**
-     * Meetod andmebaasiga ühendamiseks, et andmebaasist andmeid saada
-     * @param kasutajaNimi Parameeter kasutaja andmebaasi kasutajanime jaoks, enamasti "postgres"
-     * @param parool Parameeter kasutaja andmebaasi parooli jaoks, enamasti "sql"
-     * @param port Parameeter andmebaasi localhost pordi määramiseks
-     * @param andmebaasiNimi Parameeter andmebaasi nime jaoks, valisime "pomodoro"
-     * @return Tagastab ühenduse andmebaasiga
-     */
     public Connection looUhendus(String URL, int port, String kasutajaNimi, String parool, String andmebaasiNimi) throws SQLException {
         String url = String.format("jdbc:postgresql://%s:%d/%s", URL, port, andmebaasiNimi);
         Connection andmebaas = DriverManager.getConnection(url, kasutajaNimi, parool);
@@ -62,10 +55,6 @@ public class Andmebaas implements AutoCloseable {
         katkestaUhendus();
     }
 
-    /**
-     * Meetod andmebaasi olemasolu ning toimimise kontrollimiseks
-     * @return Töötava andmebaasi puhul tagastab "true"
-     */
     public boolean kontrolliAndmebaas() {
         boolean tagastus = false;
 
@@ -84,9 +73,6 @@ public class Andmebaas implements AutoCloseable {
         return tagastus;
     }
 
-    /**
-     * Kui andmebaas puudub, siis loob selle andmebaasi.
-     */
     public void looAndmebaas() {
         if (kontrolliAndmebaas()) {
             System.out.println("Andmebaas juba olemas!");
@@ -101,9 +87,6 @@ public class Andmebaas implements AutoCloseable {
         }
     }
 
-    /**
-     * Meetod andmebaasis kasutajate tabeli loomiseks, kasutusel kui andmebaas puudub.
-     */
     public void looKasutajadOlem() {
         final String tabeliNimi = "kasutajad";
 
@@ -114,21 +97,45 @@ public class Andmebaas implements AutoCloseable {
         final String looKasutajadOlem =
                 "CREATE TABLE " + tabeliNimi + " (" +
                         "kasutaja_id SERIAL PRIMARY KEY NOT NULL UNIQUE," +
-                        "nimi VARCHAR(100) NOT NULL UNIQUE" +
-                        "parool " +
+                        "nimi VARCHAR(100) NOT NULL UNIQUE," +
+                        "parooli_sool VARCHAR(24) NOT NULL," +
+                        "parooli_rasi VARCHAR(44) NOT NULL" +
                         ");";
 
-        try (Statement looKasutajadOlemLause = andmebaas.createStatement()){
-            looKasutajadOlemLause.executeUpdate(looKasutajadOlem);
+        try (PreparedStatement looKasutajadOlemLause = andmebaas.prepareStatement(looKasutajadOlem)) {
+            looKasutajadOlemLause.executeUpdate();
             System.out.printf("%s olem loodud\n", tabeliNimi);
         } catch (SQLException viga) {
             System.out.printf("%s olemi loomisel tekkis viga: %s\n", tabeliNimi, viga.getMessage());
         }
     }
 
-    /**
-     * Neetid abdnebaasu ülesannete tabeli loomiseks, kui see puudub andmebaasist.
-     */
+    public void looEesmargidOlem() {
+        final String tabeliNimi = "eesmargid";
+
+        if (kasOlemOlemas(tabeliNimi)) {
+            System.out.printf("%s olem juba olemas\n", tabeliNimi);
+            return;
+        }
+
+        final String looEesmargidOlem =
+                "CREATE TABLE " + tabeliNimi + " (" +
+                        "eesmark_id SERIAL PRIMARY KEY NOT NULL UNIQUE, " +
+                        "eesmark_nimi VARCHAR(100) NOT NULL, " +
+                        "kasutaja_id INT NOT NULL," +
+                        "kas_tehtud BOOLEAN DEFAULT FALSE NOT NULL," +
+                        "tahtaeg TIMESTAMP," +
+                        "FOREIGH KEY (kasutaja_id) REFERENCES kasutajad(kasutaja_id)," +
+                        "CONSTRAINT kasutajal_ainulaadsed_eesmargid UNIQUE (eesmark_nimi, kasutaja_id)" +
+                        ");";
+        try (PreparedStatement looEesmargidOlemLause = andmebaas.prepareStatement(looEesmargidOlem)) {
+            looEesmargidOlemLause.executeUpdate();
+            System.out.printf("%s olem loodud\n", tabeliNimi);
+        } catch (SQLException viga) {
+            System.out.printf("%s olemi loomisel tekkis viga: %s\n", tabeliNimi, viga.getMessage());
+        }
+    }
+
     public void looUlesandedOlem() {
         final String tabeliNimi = "ulesanded";
 
@@ -141,44 +148,40 @@ public class Andmebaas implements AutoCloseable {
                 "CREATE TABLE " + tabeliNimi + " (" +
                         "ulesanne_id SERIAL PRIMARY KEY NOT NULL UNIQUE," +
                         "ulesanne_nimi VARCHAR(100) NOT NULL," +
-                        "kasutaja_id INT NOT NULL," +
-                        "FOREIGN KEY (kasutaja_id) REFERENCES kasutajad(kasutaja_id)," +
-                        "CONSTRAINT kasutajal_ainulaadsed_ulesanded UNIQUE (ulesanne_nimi, kasutaja_id)" +
+                        "eesmark_id INT NOT NULL," +
+                        "kas_tehtud BOOLEAN DEFAULT FALSE NOT NULL," +
+                        "tahtaeg TIMESTAMP, " +
+                        "FOREIGN KEY (eesmark_id) REFERENCES eesmargid(eesmark_id)," +
+                        "CONSTRAINT kasutajal_ainulaadsed_ulesanded UNIQUE (ulesanne_nimi, eesmark_id)" +
                         ");";
 
-        try (Statement looUlesandedOlemLause = andmebaas.createStatement()) {
-            looUlesandedOlemLause.executeUpdate(looUlesandedOlem);
+        try (PreparedStatement looUlesandedOlemLause = andmebaas.prepareStatement(looUlesandedOlem)) {
+            looUlesandedOlemLause.executeUpdate();
             System.out.printf("%s olem loodud\n", tabeliNimi);
         } catch (SQLException viga) {
             System.out.printf("%s olemi loomisel tekkis viga: %s\n", tabeliNimi, viga.getMessage());
         }
     }
 
-    /**
-     * Meetod pomodorode tabeli loomiseks, kui see andmebaasist puudub
-     */
-    public void looPomodorodOlem() {
-        final String tabeliNimi = "pomodorod";
+    public void looProduktiivsusAegOlem() {
+        final String tabeliNimi = "produktiivne_aeg";
 
         if (kasOlemOlemas(tabeliNimi)) {
             System.out.printf("%s olem juba olemas\n", tabeliNimi);
             return;
         }
 
-        final String looPomodorodOlem =
+        final String looProduktiivsusAegOlem =
                 "CREATE TABLE " + tabeliNimi + " (" +
-                        "pomodoro_id SERIAL PRIMARY KEY NOT NULL UNIQUE," +
-                        "produktiivne_aeg INTERVAL NOT NULL," +
-                        "puhke_aeg INTERVAL NOT NULL," +
-                        "kordused INT," +
-                        "produktiivne_aeg_kokku INTERVAL," +
+                        "produktiivne_aeg_id SERIAL PRIMARY KEY NOT NULL UNIQUE," +
+                        "kuupaev TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+                        "produktiivne_aeg INTERVAL," +
                         "ulesanne_id INT NOT NULL," +
-                        "sisestuse_aeg TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP," +
                         "FOREIGN KEY (ulesanne_id) REFERENCES ulesanded(ulesanne_id)" +
                         ");";
 
-        try (Statement looUlesandedOlemLause = andmebaas.createStatement()) {
-            looUlesandedOlemLause.executeUpdate(looPomodorodOlem);
+        try (PreparedStatement looProduktiivsusAegOlemLause = andmebaas.prepareStatement(looProduktiivsusAegOlem)) {
+            looProduktiivsusAegOlemLause.executeUpdate();
             System.out.printf("%s olem loodud\n", tabeliNimi);
         } catch (SQLException viga) {
             System.out.printf("%s olemi loomisel tekkis viga: %s\n", tabeliNimi, viga.getMessage());

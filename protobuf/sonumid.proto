@@ -1,0 +1,8 @@
+
+syntax = "proto3";
+
+message AutentimisParing {
+  string kasutaja_nimi = 1;
+  string parooli_sool = 2;
+  string parooli_rasi = 3;
+}
