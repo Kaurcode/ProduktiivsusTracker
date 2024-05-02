@@ -1,5 +1,4 @@
 
-import javafx.application.Application;
 import produktiivsustracker.klient.Klient;
 import produktiivsustracker.server.Server;
 
@@ -16,7 +15,6 @@ public class Test {
             }
         });
         serverThread.start();
-        Application.launch(produktiivsustracker.server.ui.MainUI.class);
 
         try (Klient klient1 = new Klient(); Klient klient2 = new Klient()) {
 
