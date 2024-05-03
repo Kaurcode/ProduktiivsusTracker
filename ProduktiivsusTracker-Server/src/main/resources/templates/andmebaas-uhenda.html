@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ee">
+<head>
+    <title>Andmebaasiga ühendamine</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+    <h1>Ühenda andmebaasiga</h1>
+    <form action="#" th:action="@{/andmebaas}" th:object="${andmebaasiAndmed}" method="post">
+        <p>Andmebaasi URL: <input type="text" th:field="*{URL}" /></p>
+        <p>Andmebaasi port: <input type="text" th:field="*{port}" /></p>
+        <p>Andmebaasi kasutajanimi: <input type="text" th:field="*{kasutajaNimi}" /></p>
+        <p>Andmebaasi parool: <input type="text" th:field="*{parool}" /></p>
+        <p>Andmebaasi nimi: <input type="text" th:field="*{andmebaasiNimi}" /></p>
+        <p><input type="submit" value="Ühenda" /> <input type="reset" value="Reseti"/></p>
+    </form>
+</body>
+</html>

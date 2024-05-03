@@ -1,4 +1,4 @@
-package produktiivsustracker.server.db;
+package produktiivsustracker.produktiivsustrackerserver.andmebaas;
 
 import java.sql.*;
 
